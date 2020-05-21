@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 RSpec.describe User, type: :model do
   it 'should have a valid Factory' do
-    expect(create(:user)).to be_valid  
+    expect(create(:user)).to be_valid
   end
-  describe 'Datatbase table' do 
-  it { is_expected.to have_db_column :encrypted_password }
-  it { is_expected.to have_db_column :email }
-  it { is_expected.to have_db_column :tokens } 
+  describe 'Datatbase table' do
+    it { is_expected.to have_db_column :encrypted_password }
+    it { is_expected.to have_db_column :email }
+    it { is_expected.to have_db_column :tokens }
   end
 
   describe 'Validations' do
@@ -27,6 +29,12 @@ RSpec.describe User, type: :model do
 
       emails.each do |email|
         it { is_expected.to allow_value(email).for(:email) }
+      end
+    end
+
+    describe 'Factory' do
+      it 'Should have valid factory' do
+        expect(create(:user)).to be_valid
       end
     end
   end
