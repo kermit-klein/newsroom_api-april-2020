@@ -11,6 +11,7 @@ gem 'puma', '~> 4.1'
 gem 'bootsnap', '>= 1.4.2', require: false
 gem 'rack-cors', require: 'rack/cors'
 gem 'active_model_serializers'
+gem 'devise_token_auth'
 
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
