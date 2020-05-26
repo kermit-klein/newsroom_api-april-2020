@@ -29,6 +29,10 @@ RSpec.describe 'Api::Articles :show', type: :request do
       it ':body' do
         expect(response_json['article']).to have_key 'body'
       end
+      
+      it ':published_at' do
+        expect(response_json['article']).to have_key 'published_at'
+      end
 
       it ':premium' do
         expect(response_json['article']).to have_key 'premium'
