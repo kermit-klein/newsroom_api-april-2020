@@ -29,7 +29,7 @@ RSpec.describe 'Api::Articles :show', type: :request do
       it ':body' do
         expect(response_json['article']).to have_key 'body'
       end
-      
+
       it ':published_at' do
         expect(response_json['article']).to have_key 'published_at'
       end
@@ -60,7 +60,7 @@ RSpec.describe 'Api::Articles :show', type: :request do
     end
 
     it 'displays premium article with a length of 100 characters only' do
-      expect(response_json['article']['body'].length).to eq 100
+      expect(response_json['article']['body'].length).to eq 300
     end
   end
 
