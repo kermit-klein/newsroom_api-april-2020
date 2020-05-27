@@ -29,6 +29,8 @@ Response : {articles:[{id:1,title:"title1"},{id:2,title:"title2"}]}
 }
 ```
 
+#### show
+
 get /articles/:id
 :id exists in db gives a 200 response with body:
 
@@ -40,6 +42,7 @@ get /articles/:id
     "id": 1,
     "title": "A title",
     "body": "The body",
+    "published_at":"YYYY-MM-dd hh:mm"
     "premium": false
   }
 }
@@ -52,6 +55,8 @@ get /articles/:id
   "message": "Article with id :id could not be found"
 }
 ```
+
+#### create
 
 post /articles **Requires authentication headers!**
 Headers need to include the standard { uid: "", client: "", access_token: "", expiry: "", token_type: "Bearer" }
