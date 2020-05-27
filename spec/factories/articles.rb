@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :article do
     title { 'this is title' }
-    body { 'this is body, lorem ipsum.' * 9 }
+    body { 'this is body, lorem ipsum.' * 20 }
     category { 'sport' }
   end
 end
