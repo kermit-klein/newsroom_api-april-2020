@@ -53,4 +53,18 @@ RSpec.describe 'Api::Admin::Articles :index', type: :request do
       expect(response_json['message']).to eq 'You are not authorized'
     end
   end
+
+  describe 'GET /api/admin/articles unauthorized' do
+    before do
+      get '/api/admin/articles'
+    end
+
+    it 'has a 401 response' do
+      expect(response).to have_http_status 401
+    end
+
+    it 'visitor cannot see unpublished articles' do
+      expect(response_json['errors'][0]).to eq "You need to sign in or sign up before continuing."
+    end
+  end
 end

@@ -8,7 +8,7 @@ class Api::Admin::ArticlesController < ApplicationController
       article = Article.where(published: false)
       render json: article, each_serializer: Admin::Article::IndexSerializer
     else
-      render json: { message: 'You are not authorized' }, status: 401
+      render json: { message: 'You are not authorized', errors: ['You are not authorized'] }, status: 401
     end
   end
 end
