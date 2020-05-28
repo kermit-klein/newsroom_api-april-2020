@@ -6,7 +6,7 @@ RSpec.describe 'POST /api/auth/sign_in', type: :request do
   let(:expected_response) do
     {
       'data' => {
-        'id' => user.id, 'uid' => user.uid, 'email'=> user.email,
+        'id' => user.id, 'uid' => user.uid, "subscriber"=>false, 'email'=> user.email,
         'provider' => 'email', 'allow_password_change' => false
       }
     }
