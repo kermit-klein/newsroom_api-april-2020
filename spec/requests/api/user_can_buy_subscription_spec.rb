@@ -8,7 +8,7 @@ describe 'POST /api/subscriptions', type: :request do
   let(:valid_token) { stripe_helper.generate_card_token }
   before(:each) { StripeMock.start }
   before(:each) { StripeMock.stop }
-  let!(:product) { stripe_helper.create_product }
+  # let!(:product) { stripe_helper.create_product }
   let(:plan) do
     stripe_helper.create_plan(
       id: 'dns_subscription',
@@ -16,8 +16,8 @@ describe 'POST /api/subscriptions', type: :request do
       currency: 'usd',
       interval: 'month',
       interval_count: 12,
-      name: 'DNS Subscription',
-      product: product.id
+      name: 'DNS Subscription'
+      # product: product.id
     )
   end
 
@@ -39,7 +39,7 @@ describe 'POST /api/subscriptions', type: :request do
         expect(response).to have_http_status 200
       end
 
-      it 'returns sucess message' do
+      it 'returns success message' do
         expect(response_json['message']).to eq 'Transaction was sucessful'
       end
     end
@@ -50,7 +50,7 @@ describe 'POST /api/subscriptions', type: :request do
       end
 
       it 'returns error message' do
-        expect(response_json['message']).to eq 'Transaction was NOT sucessful. There was no token provided...'
+        expect(response_json['message']).to eq 'Transaction was NOT successful. There was no token provided...'
       end
 
       it 'returns error http code' do

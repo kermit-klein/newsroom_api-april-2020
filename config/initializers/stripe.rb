@@ -5,5 +5,5 @@ Stripe.plan :dns_subscription do |plan|
   plan.amount = 50_000
   plan.currency = 'usd'
   plan.interval = 'month'
-  plan.interal_count = 12
+  plan.interval_count = 12
 end
