@@ -13,7 +13,7 @@ end
 
 private
 
-def render_unauthorized()
+def render_unauthorized
   render json: { message: 'You are not authorized', errors: ['You are not authorized'] }, status: 401
 end
 
