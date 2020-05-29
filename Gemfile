@@ -23,7 +23,7 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'pry-rails'
   gem 'coveralls'
-  gem 'stripe-ruby-mock'
+  gem 'stripe-ruby-mock', '3.0.0'
 end
 
 group :development do

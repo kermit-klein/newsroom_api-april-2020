@@ -1,25 +1,28 @@
 require 'stripe_mock'
 
-describe 'POST /api/subscriptions', type: :request do
-  let(:user) {create(:user)}
-  let(:credentials) { user.create_new_auth_token }
-  let(:headers) { {HTTP_ACCEPT: 'application/json' }.merge!(credentials)}
+RSpec.describe 'POST /api/subscriptions', type: :request do
   let(:stripe_helper) { StripeMock.create_test_helper }
-  let(:valid_token) { stripe_helper.generate_card_token }
   before(:each) { StripeMock.start }
-  before(:each) { StripeMock.stop }
-  # let!(:product) { stripe_helper.create_product }
-  let(:plan) do
+  after(:each) { StripeMock.stop }
+  let(:valid_token) { stripe_helper.generate_card_token }
+  
+  let(:product) { stripe_helper.create_product(id: "my_plan") }
+
+  let!(:plan) do
     stripe_helper.create_plan(
       id: 'dns_subscription',
       amount: 50000,
       currency: 'usd',
       interval: 'month',
       interval_count: 12,
-      name: 'DNS Subscription'
-      # product: product.id
+      name: 'DNS Subscription',
+      product: product.id
     )
   end
+
+  let(:user) {create(:user)}
+  let(:credentials) { user.create_new_auth_token }
+  let(:headers) { {HTTP_ACCEPT: 'application/json' }.merge!(credentials)}
 
     describe 'with valid parameters' do
       before do
@@ -40,7 +43,7 @@ describe 'POST /api/subscriptions', type: :request do
       end
 
       it 'returns success message' do
-        expect(response_json['message']).to eq 'Transaction was sucessful'
+        expect(response_json['message']).to eq 'Transaction was successful'
       end
     end
 

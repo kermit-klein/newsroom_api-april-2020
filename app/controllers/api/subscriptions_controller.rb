@@ -7,7 +7,6 @@ class Api::SubscriptionsController < ApplicationController
       customer = Stripe::Customer.list(email: current_user.email).data.first
       customer ||= Stripe::Customer.create({email: current_user.email, source: params[:stripeToken]})
       subscription = Stripe::Subscription.create({customer: customer.id, plan: 'dns_subscription'})
-      binding.pry
       if Rails.env.test?
         invoice = Stripe::Invoice.create({customer: customer.id, subscription: subscription.id, paid: true})
         subscription.latest_invoice = invoice.id
