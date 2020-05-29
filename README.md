@@ -144,3 +144,25 @@ with wrong password or email
     "success":false, "errors":["Invalid login credentials. Please try again."]
 }
 ```
+
+### **Subscriber**
+
+Subscription plan via [Stripe](https://stripe.com/docs)
+```
+Stripe.plan :dns_subscription do |plan|
+  plan.name = 'DNS Subscription'
+  plan.amount = 50000
+  plan.currency = 'usd'
+  plan.interval = 'month'
+  plan.interval_count = 12
+end
+```
+#### create
+
+post /api/subscriptions, params: { stripeToken: valid_token } **Requires authentication headers!**
+
+200 response - ```{ message: "Transaction was successful" }```
+
+422 responses
+ - stripeToken not existing  - ```{ message: "Transaction was NOT successful. There was no token provided..." }```
+ - invoice not paid -  ```{ message: "Transaction was NOT successful. You got no money, fool!" }```
