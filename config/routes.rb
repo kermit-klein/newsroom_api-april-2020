@@ -6,7 +6,7 @@ Rails.application.routes.draw do
     resources :articles, only: %i[index show create], constraints: { format: 'json' }
     resources :subscriptions, only: [:create], constraints: { format: 'json' } 
     namespace :admin do
-      resources :articles, only: [:index], constraints: { format: 'json' }
+      resources :articles, only: [:index, :update], constraints: { format: 'json' }
     end
   end
 end
