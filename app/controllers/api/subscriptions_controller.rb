@@ -2,21 +2,44 @@
 
 class Api::SubscriptionsController < ApplicationController
   before_action :authenticate_user!
+  before_action :user_is_subscriber?
+  before_action :check_stripe_token
 
   def create
-    if params[:stripeToken] && !params[:stripeToken].empty?
-      begin
-        customer_id = get_customer(params[:stripeToken])
-        subscription = Stripe::Subscription.create({ customer: customer_id, plan: "dns_subscription" })
+    begin
+      customer_id = get_customer(params[:stripeToken])
+      subscription = Stripe::Subscription.create({ customer: customer_id, plan: "dns_subscription" })
 
-        Rails.env.test? && test_env(customer_id, subscription)
-        payment_status(subscription)
-      rescue => error
-        render json: { message: "Transaction was NOT successful. #{error.message}" }, status: 422
-      end
-    else
-      render json: { message: "Transaction was NOT successful. There was no token provided..." }, status: 422
+      test_enviroment?(customer_id, subscription)
+
+      status = Stripe::Invoice.retrieve(subscription.latest_invoice).paid
+
+      if status
+        current_user.update_attribute(:role, 'subscriber')
+        render json: { message: "Transaction was successful" }
+      else
+        render_stripe_error('You got no money, fool!')
+      end      
+    rescue => error
+      render_stripe_error(error.message)
     end
+  end
+
+  protected
+
+  def check_stripe_token
+    if !params[:stripeToken] or params[:stripeToken].empty?
+      render_stripe_error('There was no token provided...')
+      return
+    end
+  end
+
+  def user_is_subscriber?
+    current_user.subscriber? && render_stripe_error('You are already a subscriber') and return
+  end
+
+  def render_stripe_error(error)
+    render json: { message: "Transaction was NOT successful. #{error}" }, status: 422
   end
 
   def get_customer(stripeToken)
@@ -25,19 +48,10 @@ class Api::SubscriptionsController < ApplicationController
     customer.id
   end
 
-  def test_env(customer_id, subscription)
-    invoice = Stripe::Invoice.create({ customer: customer_id, subscription: subscription.id, paid: true })
-    subscription.latest_invoice = invoice.id
-  end
-
-  def payment_status(subscription)
-    status = Stripe::Invoice.retrieve(subscription.latest_invoice).paid
-
-    if status
-      current_user.update_attribute(:subscriber, true)
-      render json: { message: "Transaction was successful" }
-    else
-      render json: { message: "Transaction was NOT successful. You got no money, fool!" }, status: 422
+  def test_enviroment?(customer_id, subscription)
+    if Rails.env.test?
+      invoice = Stripe::Invoice.create({ customer: customer_id, subscription: subscription.id, paid: true })
+      subscription.latest_invoice = invoice.id  
     end
   end
 end

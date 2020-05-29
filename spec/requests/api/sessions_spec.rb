@@ -8,7 +8,6 @@ RSpec.describe 'POST /api/auth/sign_in', type: :request do
       'data' => {
         'id' => user.id,
         'uid' => user.uid,
-        'subscriber' => false, 
         'email' => user.email, 
         'role' => 'user',
         'provider' => 'email', 

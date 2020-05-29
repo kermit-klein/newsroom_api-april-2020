@@ -35,7 +35,7 @@ RSpec.describe "POST /api/subscriptions", type: :request do
 
     it "set the subscriber attribute to true on successful transaction" do
       user.reload
-      expect(user.subscriber).to eq true
+      expect(user.role).to eq 'subscriber'
     end
 
     it "returns sucess http code" do
@@ -60,9 +60,9 @@ RSpec.describe "POST /api/subscriptions", type: :request do
       expect(response).to have_http_status 422
     end
 
-    it "does not set the subscriber attribute to true" do
+    it "does NOT set user role to subsciber" do
       user.reload
-      expect(user.subscriber).not_to eq true
+      expect(user.role).not_to eq 'subscriber'
     end
   end
 
@@ -76,16 +76,17 @@ RSpec.describe "POST /api/subscriptions", type: :request do
       expect(response).to have_http_status 422
     end
 
-    it "does NOT set subsciber attribute to true" do
+    it "does NOT set user role to subsciber" do
       user.reload
-      expect(user.subscriber).not_to eq true
+      expect(user.role).not_to eq 'subscriber'
     end
+
     it "returns an error message" do
       expect(response_json["message"]).to eq "Transaction was NOT successful. There was no token provided..."
     end
   end
 
-  describe "creditcard is declined" do
+  describe "credit card is declined" do
     before do
       StripeMock.prepare_card_error(:card_declined, :new_invoice)
 
@@ -97,12 +98,32 @@ RSpec.describe "POST /api/subscriptions", type: :request do
       expect(response).to have_http_status 422
     end
 
-    it "does NOT set subsciber attribute to true" do
+    it "does NOT set user role to subsciber" do
       user.reload
-      expect(user.subscriber).not_to eq true
+      expect(user.role).not_to eq 'subscriber'
     end
+
     it "returns an error message" do
       expect(response_json["message"]).to eq "Transaction was NOT successful. The card was declined"
+    end
+  end
+
+  describe "user is already subscriber" do
+    let(:subscriber) { create(:user, role: :subscriber) }
+    let(:subscriber_credentials) { subscriber.create_new_auth_token }
+    let(:subscriber_headers) { { HTTP_ACCEPT: "application/json" }.merge!(subscriber_credentials) }
+  
+    before do
+      post "/api/subscriptions",
+        params: { stripeToken: valid_token }, headers: subscriber_headers
+    end
+
+    it "returns a error http code" do
+      expect(response).to have_http_status 422
+    end
+
+    it "returns an error message" do
+      expect(response_json["message"]).to eq "Transaction was NOT successful. You are already a subscriber"
     end
   end
 end
