@@ -84,4 +84,25 @@ RSpec.describe "POST /api/subscriptions", type: :request do
       expect(response_json["message"]).to eq "Transaction was NOT successful. There was no token provided..."
     end
   end
+
+  describe "creditcard is declined" do
+    before do
+      StripeMock.prepare_card_error(:card_declined, :new_invoice)
+
+      post "/api/subscriptions",
+        params: { stripeToken: valid_token }, headers: headers
+    end
+
+    it "returns a error http code" do
+      expect(response).to have_http_status 422
+    end
+
+    it "does NOT set subsciber attribute to true" do
+      user.reload
+      expect(user.subscriber).not_to eq true
+    end
+    it "returns an error message" do
+      expect(response_json["message"]).to eq "Transaction was NOT successful. The card was declined"
+    end
+  end
 end

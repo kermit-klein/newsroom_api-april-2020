@@ -5,11 +5,15 @@ class Api::SubscriptionsController < ApplicationController
 
   def create
     if params[:stripeToken] && !params[:stripeToken].empty?
-      customer_id = get_customer(params[:stripeToken])
-      subscription = Stripe::Subscription.create({ customer: customer_id, plan: "dns_subscription" })
+      begin
+        customer_id = get_customer(params[:stripeToken])
+        subscription = Stripe::Subscription.create({ customer: customer_id, plan: "dns_subscription" })
 
-      Rails.env.test? && test_env(customer_id, subscription)
-      payment_status(subscription)
+        Rails.env.test? && test_env(customer_id, subscription)
+        payment_status(subscription)
+      rescue => error
+        render json: { message: "Transaction was NOT successful. #{error.message}" }, status: 422
+      end
     else
       render json: { message: "Transaction was NOT successful. There was no token provided..." }, status: 422
     end
