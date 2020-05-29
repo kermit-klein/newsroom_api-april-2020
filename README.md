@@ -118,6 +118,22 @@ created_at is based on db created_at
     ]
 }
 ```
+#### update
+
+put /admin/articles/:id requires params: activity=="PUBLISH" and accepts :category and :premium.
+If :category is not a valid category or :premium not a boolean, an error will be returned.
+````
+Success:
+{ message: "Article successfully published!"}, 200
+No auth headers:
+{ errors: ["You need to sign in or sign up before continuing."]}, 401
+Auth headers for non-editor:
+{ message: "You are not authorized }, 401
+Bad id:
+{ message: "Article not published: Couldn't find Article with 'id'=:id"}, 422
+Bad params, example:
+{ message: "Article not published: 'music' is not a valid category"}, 422
+```
 
 ### **Login**
 
