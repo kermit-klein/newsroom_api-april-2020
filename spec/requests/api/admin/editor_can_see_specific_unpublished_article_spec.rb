@@ -2,6 +2,7 @@
 
 RSpec.describe 'Api::Admin::Articles :show', type: :request do
   let!(:article) { create(:article, :with_image, published: false) }
+  let!(:article2) { create(:article, :with_image, published: true) }
 
   let(:editor) { create(:user, role: 'editor') }
   let(:editors_credentials) { editor.create_new_auth_token }
@@ -31,7 +32,7 @@ RSpec.describe 'Api::Admin::Articles :show', type: :request do
 
       it ':category' do
         expect(response_json['article']).to have_key 'category'
-      end 
+      end
 
       it ':created_at' do
         expect(response_json['article']).to have_key 'created_at'
@@ -45,10 +46,10 @@ RSpec.describe 'Api::Admin::Articles :show', type: :request do
 
   describe 'GET /api/admin/articles/:id where article is already published' do
     before do
-      get '/api/admin/articles/1000002'
+      get "/api/admin/articles/#{article2.id}", headers: editors_headers
     end
 
-    it 'has a 404 response' do
+    it 'has a 400 response' do
       expect(response).to have_http_status 400
     end
 
@@ -56,10 +57,10 @@ RSpec.describe 'Api::Admin::Articles :show', type: :request do
       expect(response_json['message']).to eq 'This article was already published'
     end
   end
-  
+
   describe 'GET /api/admin/articles/:id to non-existing id' do
     before do
-      get '/api/admin/articles/1000002'
+      get '/api/admin/articles/34534535', headers: editors_headers
     end
 
     it 'has a 404 response' do
@@ -67,7 +68,7 @@ RSpec.describe 'Api::Admin::Articles :show', type: :request do
     end
 
     it 'responds with error message' do
-      expect(response_json['message']).to eq 'Article with id 1000002 could not be found.'
+      expect(response_json['message']).to eq 'Article with id 34534535 could not be found.'
     end
   end
 
@@ -95,7 +96,7 @@ RSpec.describe 'Api::Admin::Articles :show', type: :request do
     end
 
     it 'visitor cannot see unpublished articles' do
-      expect(response_json['errors'][0]).to eq 'You need to sign in before continuing.'
+      expect(response_json['errors'][0]).to eq 'You need to sign in or sign up before continuing.'
     end
   end
 end
