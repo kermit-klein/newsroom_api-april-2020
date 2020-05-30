@@ -5,8 +5,17 @@ class Api::Admin::ArticlesController < ApplicationController
   before_action :editor?
 
   def index
-      article = Article.where(published: false)
-      render json: article, each_serializer: Admin::Article::IndexSerializer
+    article = Article.where(published: false)
+    render json: article, each_serializer: Admin::Article::IndexSerializer
+  end
+
+  def show
+    article = Article.find(params[:id])
+    if article.published == true
+      render json: { message: 'This article was already published' }, status: 400
+    else
+      render json: article, serializer: Admin::Article::ShowSerializer
+    end
   end
 
   private
