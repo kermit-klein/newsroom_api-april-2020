@@ -10,7 +10,9 @@ RSpec.describe 'Api::Admin::Articles :update', type: :request do
 
   describe 'editor successfully updates and' do
     before do
-      put "/api/admin/articles/#{article.id}", headers: editors_headers, params: { activity: "PUBLISH", premium: true , category: 'economy'}
+      put "/api/admin/articles/#{article.id}", 
+      headers: editors_headers, 
+      params: { activity: "PUBLISH", premium: true , category: 'economy'}
       article.reload()
     end
 
@@ -37,7 +39,9 @@ RSpec.describe 'Api::Admin::Articles :update', type: :request do
 
   describe 'editor successfully updates only few params' do
     before do
-      put "/api/admin/articles/#{article.id}", headers: editors_headers, params: { activity: "PUBLISH", category: 'economy'}
+      put "/api/admin/articles/#{article.id}", 
+      headers: editors_headers, 
+      params: { activity: "PUBLISH", category: 'economy'}
       article.reload()
     end
 
@@ -54,9 +58,11 @@ RSpec.describe 'Api::Admin::Articles :update', type: :request do
     end
   end
 
-  describe 'article with id does not exist' do
+  describe 'article with provided id does not exist' do
     before do
-      put "/api/admin/articles/2000001", headers: editors_headers, params: { activity: "PUBLISH", premium: true , category: 'economy'}
+      put "/api/admin/articles/2000001", 
+      headers: editors_headers, 
+      params: { activity: "PUBLISH", premium: true , category: 'economy'}
       article.reload()
     end
 
@@ -71,7 +77,9 @@ RSpec.describe 'Api::Admin::Articles :update', type: :request do
 
   describe 'with bad params' do
     before do
-      put "/api/admin/articles/#{article.id}", headers: editors_headers, params: { activity: "PUBLISH", premium: false , category: 'music'}
+      put "/api/admin/articles/#{article.id}", 
+      headers: editors_headers, params: 
+      { activity: "PUBLISH", premium: false , category: 'music'}
       article.reload()
     end
 
@@ -104,7 +112,9 @@ RSpec.describe 'Api::Admin::Articles :update', type: :request do
 
   describe 'visitors cannot update articles' do
     before do
-      put "/api/admin/articles/#{article.id}", params: { activity: "PUBLISH", premium: true, category: 'economy' }
+      put "/api/admin/articles/#{article.id}", 
+      params: { activity: "PUBLISH", 
+      premium: true, category: 'economy' }
     end
 
     it 'has a 401 response' do
