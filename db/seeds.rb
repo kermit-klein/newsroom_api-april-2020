@@ -3,7 +3,7 @@
   categories = ["other", "sport", "local", "politics", "economy", "world", "entertainment"]
   premium = [true, false, false, false]
   article = Article.new(
-    title: Faker::Company.bs.capitalize, body: Faker::Lorem.paragraph(sentence_count: 35), category: categories.sample, premium: premium.sample
+    title: Faker::Company.bs.capitalize, body: Faker::Lorem.paragraph(sentence_count: 70), category: categories.sample, premium: premium.sample
   )
   article.image.attach(io: file, filename: 'image.jpg')
   article.save
