@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe 'Api::Admin::Articles :index', type: :request do
+RSpec.describe 'Api::Admin::Articles :show', type: :request do
   let!(:article) { create(:article, :with_image, published: false) }
 
   let(:editor) { create(:user, role: 'editor') }
