@@ -5,5 +5,8 @@ FactoryBot.define do
     title { 'this is title' }
     body { 'this is body, lorem ipsum.' * 20 }
     category { 'sport' }
+    trait :with_image do
+        image { fixture_file_upload(Rails.root.join('spec', 'support', 'assets', 'test-image.png'), 'image/png') }
+    end
   end
 end
