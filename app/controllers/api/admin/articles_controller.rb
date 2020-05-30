@@ -12,7 +12,7 @@ class Api::Admin::ArticlesController < ApplicationController
   def show
     article = Article.find(params[:id])
     if article.published == true
-      render json: { message: 'This article was already published' }, status: 400
+      render json: { message: 'This article was already published' }, status: 422
     else
       render json: article, serializer: Admin::Article::ShowSerializer
     end

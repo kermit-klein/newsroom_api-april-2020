@@ -144,9 +144,11 @@ to editors only
 ```
 "article": 
   {
-    "id":1,
-    "title":"title1",
+    "id": 1,
+    "title": "title1",
+    "body": "body1 body1 body1 body1 body1",
     "category":"category1",
+    "image": "http:amazon-image-thing.com",
     "created_at":"YYYY-MM-dd hh:mm"
   }
 ```
