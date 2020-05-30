@@ -18,8 +18,8 @@ class Api::Admin::ArticlesController < ApplicationController
         article.published = true
         article.save
         render json: { message: 'Article successfully published!'}
-      rescue => e
-        render json: { message: "Article not published: " + e.to_s }, status: 422
+      rescue => error
+        render json: { message: "Article not published: " + error.message }, status: 422
       end
     end
   end
