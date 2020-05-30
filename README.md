@@ -100,6 +100,7 @@ or
 #### index
 
 get /admin/articles returns only unpublished articles (:published=false)
+to editors only
 created_at is based on db created_at
 
 ```
@@ -119,6 +120,31 @@ created_at is based on db created_at
 }
 ```
 
+#### show
+
+get /admin/articles/:id returns only unpublished articles, 
+to editors only
+
+```
+"article": 
+  {
+    "id":1,
+    "title":"title1",
+    "category":"category1",
+    "created_at":"YYYY-MM-dd hh:mm"
+  }
+```
+
+Trying to access an already published article or non-existing article gives error message:
+```
+  { 
+    "message": "This article was already published"
+  }
+  or
+  {
+    "message": "Couldn't find Article with 'id'=34534535"
+  }
+```
 ### **Login**
 
 All [devise_token_auth endpoints](https://devise-token-auth.gitbook.io/devise-token-auth/usage) are open, only sign in is tested for right now.

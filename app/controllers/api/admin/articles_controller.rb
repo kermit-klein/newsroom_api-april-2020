@@ -16,8 +16,8 @@ class Api::Admin::ArticlesController < ApplicationController
     else
       render json: article, serializer: Admin::Article::ShowSerializer
     end
-  rescue StandardError
-    render json: { message: "Article with id #{params[:id]} could not be found." }, status: 404
+  rescue StandardError => e
+    render json: { message: e.message }, status: 404
   end
 
   private

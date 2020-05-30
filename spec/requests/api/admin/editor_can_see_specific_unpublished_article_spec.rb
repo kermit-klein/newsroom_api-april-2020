@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe 'Api::Admin::Articles :show', type: :request do
-  let!(:article) { create(:article, :with_image, published: false) }
-  let!(:article2) { create(:article, :with_image, published: true) }
+  let!(:unpublished_article) { create(:article, :with_image, published: false) }
+  let!(:published_article) { create(:article, :with_image, published: true) }
 
   let(:editor) { create(:user, role: 'editor') }
   let(:editors_credentials) { editor.create_new_auth_token }
@@ -14,7 +14,7 @@ RSpec.describe 'Api::Admin::Articles :show', type: :request do
 
   describe 'GET /api/admin/articles/:id' do
     before do
-      get "/api/admin/articles/#{article.id}", headers: editors_headers
+      get "/api/admin/articles/#{unpublished_article.id}", headers: editors_headers
     end
 
     it 'has a 200 response' do
@@ -46,7 +46,7 @@ RSpec.describe 'Api::Admin::Articles :show', type: :request do
 
   describe 'GET /api/admin/articles/:id where article is already published' do
     before do
-      get "/api/admin/articles/#{article2.id}", headers: editors_headers
+      get "/api/admin/articles/#{published_article.id}", headers: editors_headers
     end
 
     it 'has a 400 response' do
@@ -68,13 +68,13 @@ RSpec.describe 'Api::Admin::Articles :show', type: :request do
     end
 
     it 'responds with error message' do
-      expect(response_json['message']).to eq 'Article with id 34534535 could not be found.'
+      expect(response_json['message']).to eq "Couldn't find Article with 'id'=34534535"
     end
   end
 
   describe 'GET /api/admin/articles/:id unauthorized when journalist' do
     before do
-      get "/api/admin/articles/#{article.id}", headers: journalist_headers
+      get "/api/admin/articles/#{unpublished_article.id}", headers: journalist_headers
     end
 
     it 'has a 401 response' do
@@ -86,9 +86,9 @@ RSpec.describe 'Api::Admin::Articles :show', type: :request do
     end
   end
 
-  describe 'GET /api/admin/articles unauthorized when no-login' do
+  describe 'GET /api/admin/articles unauthorized when not logged in' do
     before do
-      get "/api/admin/articles/#{article.id}"
+      get "/api/admin/articles/#{unpublished_article.id}"
     end
 
     it 'has a 401 response' do
