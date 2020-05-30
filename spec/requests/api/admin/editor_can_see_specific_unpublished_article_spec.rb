@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe 'Api::Admin::Articles :index', type: :request do
+RSpec.describe 'Api::Admin::Articles :show', type: :request do
   let!(:article) { create(:article, :with_image, published: false) }
 
   let(:editor) { create(:user, role: 'editor') }
@@ -29,6 +29,10 @@ RSpec.describe 'Api::Admin::Articles :index', type: :request do
         expect(response_json['article']).to have_key 'body'
       end
 
+      it ':category' do
+        expect(response_json['article']).to have_key 'category'
+      end 
+
       it ':created_at' do
         expect(response_json['article']).to have_key 'created_at'
       end
@@ -39,6 +43,20 @@ RSpec.describe 'Api::Admin::Articles :index', type: :request do
     end
   end
 
+  describe 'GET /api/admin/articles/:id where article is already published' do
+    before do
+      get '/api/admin/articles/1000002'
+    end
+
+    it 'has a 404 response' do
+      expect(response).to have_http_status 400
+    end
+
+    it 'responds with error message' do
+      expect(response_json['message']).to eq 'This article was already published'
+    end
+  end
+  
   describe 'GET /api/admin/articles/:id to non-existing id' do
     before do
       get '/api/admin/articles/1000002'
