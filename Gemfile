@@ -14,6 +14,7 @@ gem 'active_model_serializers'
 gem 'devise_token_auth'
 gem 'aws-sdk-s3'
 gem 'stripe-rails'
+gem 'faker'
 
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
