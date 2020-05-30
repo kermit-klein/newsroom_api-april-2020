@@ -49,8 +49,8 @@ RSpec.describe 'Api::Admin::Articles :show', type: :request do
       get "/api/admin/articles/#{published_article.id}", headers: editors_headers
     end
 
-    it 'has a 400 response' do
-      expect(response).to have_http_status 400
+    it 'has a 422 response' do
+      expect(response).to have_http_status 422
     end
 
     it 'responds with error message' do
