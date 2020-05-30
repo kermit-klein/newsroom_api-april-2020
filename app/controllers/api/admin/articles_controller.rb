@@ -20,6 +20,21 @@ class Api::Admin::ArticlesController < ApplicationController
     render json: { message: e.message }, status: 404
   end
 
+  def update
+    if params[:activity] == "PUBLISH"
+      begin
+        article = Article.find(params[:id])
+        article.premium = params[:premium] || article.premium
+        article.category = params[:category] || article.category
+        article.published = true
+        article.save
+        render json: { message: 'Article successfully published!'}
+      rescue => error
+        render json: { message: "Article not published: " + error.message }, status: 422
+      end
+    end
+  end
+
   private
 
   def editor?
