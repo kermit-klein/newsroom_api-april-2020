@@ -1,15 +1,14 @@
 # frozen_string_literal: true
 
 RSpec.describe 'Api::Articles :show', type: :request do
-  let!(:article) { create(:article) }
+  let!(:article) { create(:article, published: true, published_at: Time.now) }
   let(:user) { create(:user) }
   let(:credentials) { user.create_new_auth_token }
   let(:headers) { { HTTP_ACCEPT: 'application/json' }.merge!(credentials) }
-  let!(:premium_article) { create(:article, premium: true) }
+  let!(:premium_article) { create(:article, published: true, published_at: Time.now, premium: true) }
 
   describe 'GET /api/articles/:id' do
     before do
-      article = Article.first
       get "/api/articles/#{article.id}"
     end
 
