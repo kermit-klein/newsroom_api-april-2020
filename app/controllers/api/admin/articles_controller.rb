@@ -16,6 +16,7 @@ class Api::Admin::ArticlesController < ApplicationController
         article.premium = params[:premium] || article.premium
         article.category = params[:category] || article.category
         article.published = true
+        article.published_at = Time.now
         article.save
         render json: { message: 'Article successfully published!'}
       rescue => error
