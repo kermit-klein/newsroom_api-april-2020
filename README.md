@@ -123,7 +123,7 @@ created_at is based on db created_at
 
 put /admin/articles/:id requires params: activity=="PUBLISH" and accepts :category and :premium.
 If :category is not a valid category or :premium not a boolean, an error will be returned.
-````
+```
 Success:
 { message: "Article successfully published!"}, 200
 No auth headers:

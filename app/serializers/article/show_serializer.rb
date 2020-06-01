@@ -5,7 +5,7 @@ class Article::ShowSerializer < ActiveModel::Serializer
   attributes :id, :title, :body, :published_at, :premium, :image
 
   def published_at
-    object.created_at.strftime('%F %R')
+    object.published_at.strftime('%F %R')
   end
 
   def body
@@ -20,5 +20,5 @@ class Article::ShowSerializer < ActiveModel::Serializer
     else
       object.image.service_url(expires_in: 1.hour, disposition: 'inline')
     end
-end
+  end
 end

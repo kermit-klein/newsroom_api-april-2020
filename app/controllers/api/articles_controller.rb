@@ -4,12 +4,13 @@ class Api::ArticlesController < ApplicationController
   before_action :authenticate_user!, only: [:create]
 
   def index
-    article = Article.all
+    article = Article.where(published: true)
     render json: article, each_serializer: Article::IndexSerializer
   end
 
   def show
     article = Article.find(params[:id])
+    raise StandardError unless article.published
     render json: article, serializer: Article::ShowSerializer
   rescue StandardError
     render json: { message: "Article with id #{params[:id]} could not be found." }, status: :not_found
