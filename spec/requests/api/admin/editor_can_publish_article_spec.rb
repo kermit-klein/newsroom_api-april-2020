@@ -125,7 +125,4 @@ RSpec.describe 'Api::Admin::Articles :update', type: :request do
       expect(response_json['errors'][0]).to eq "You need to sign in or sign up before continuing."
     end
   end
-
-  describe 'editors can select local news' do
-
 end
