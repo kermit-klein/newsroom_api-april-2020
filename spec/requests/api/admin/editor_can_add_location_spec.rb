@@ -10,9 +10,9 @@ RSpec.describe 'Api::Admin::Articles :update', type: :request do
 
   describe 'editor successfully add location option' do 
     before do 
-    put "api/admin/articles/#{article.id}",
+      put "/api/admin/articles/#{article.id}",
     headers: editors_headers,
-    params: {activity: "PUBLISH", location: "Sweden"}
+    params: {activity: "PUBLISH",premium: true , category: 'economy', location: "Sweden"}
     article.reload()
   end
 
