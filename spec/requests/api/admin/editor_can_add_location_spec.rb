@@ -1,6 +1,6 @@
 RSpec.describe 'Api::Admin::Articles :update', type: :request do 
   let(:editor) { create(:user, role: 'editor') }
-  let(:article) {create(:article)}
+  let(:article) {create(:article, location: 'Sweden')}
   let(:editors_credentials) { editor.create_new_auth_token }
   let(:editors_headers) { { HTTP_ACCEPT: 'application/json' }.merge!(editors_credentials) }
 
@@ -30,10 +30,11 @@ RSpec.describe 'Api::Admin::Articles :update', type: :request do
   end
 
     describe 'editor unsuccessfully set location'do 
+    let(:article) {create(:article, location: 'France')}
       before do
         put "/api/admin/articles/#{article.id}", 
         headers: editors_headers,
-        params: {activity: "PUBLISH", location: ""}
+        params: {activity: "PUBLISH", location: "France"}
         article.reload()
       end
     

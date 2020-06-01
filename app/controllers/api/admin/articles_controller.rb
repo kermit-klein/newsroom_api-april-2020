@@ -31,7 +31,8 @@ class Api::Admin::ArticlesController < ApplicationController
         article.save
         render json: { message: 'Article successfully published!' }
       rescue StandardError => e
-        render json: { message: 'Article not published: ' + e.message }, status: 422
+        er=JSON.parse(e.message)
+        render json: { message: 'Article not published: ' + er }, status: 422
       end
     end
   end
