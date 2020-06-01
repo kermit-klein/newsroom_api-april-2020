@@ -3,6 +3,7 @@
 class Api::Admin::ArticlesController < ApplicationController
   before_action :authenticate_user!
   before_action :editor?
+  rescue_from ActiveRecord::RecordNotFound, with: :render_active_record_error
 
   def index
     article = Article.where(published: false)
@@ -16,21 +17,19 @@ class Api::Admin::ArticlesController < ApplicationController
     else
       render json: article, serializer: Admin::Article::ShowSerializer
     end
-  rescue StandardError => e
-    render json: { message: e.message }, status: 404
   end
 
   def update
-    if params[:activity] == "PUBLISH"
+    if params[:activity] == 'PUBLISH'
       begin
         article = Article.find(params[:id])
         article.premium = params[:premium] || article.premium
         article.category = params[:category] || article.category
         article.published = true
         article.save
-        render json: { message: 'Article successfully published!'}
-      rescue => error
-        render json: { message: "Article not published: " + error.message }, status: 422
+        render json: { message: 'Article successfully published!' }
+      rescue StandardError => e
+        render json: { message: 'Article not published: ' + e.message }, status: 422
       end
     end
   end
@@ -41,5 +40,9 @@ class Api::Admin::ArticlesController < ApplicationController
     unless current_user.role == 'editor'
       render json: { message: 'You are not authorized', errors: ['You are not authorized'] }, status: 401
     end
+  end
+
+  def render_active_record_error(e)
+    render json: { message: e.message }, status: 404
   end
 end
