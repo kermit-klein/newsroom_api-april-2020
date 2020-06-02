@@ -35,12 +35,12 @@ RSpec.describe 'Api::Admin::Articles :update', type: :request do
 
   describe 'editor publishes without location'do 
     let(:article) {create(:article)}
-      before do
-        put "/api/admin/articles/#{article.id}", 
-        headers: editors_headers,
-        params: {activity: "PUBLISH"}
-        article.reload()
-      end
+    before do
+      put "/api/admin/articles/#{article.id}", 
+      headers: editors_headers,
+      params: {activity: "PUBLISH"}
+      article.reload()
+    end
     
     it 'gives an ok response' do
       expect(response).to have_http_status 200
