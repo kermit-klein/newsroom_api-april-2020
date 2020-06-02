@@ -9,8 +9,8 @@
     body: Faker::Lorem.paragraph(sentence_count: 70), 
     category: categories.sample, premium: premium.sample, 
     published: true, 
-    published_at: Time.now
-    location: location
+    published_at: Time.now,
+    location: location,
     international: location ? [true,false].sample : true
   )
   article.image.attach(io: file, filename: 'image.jpg')
