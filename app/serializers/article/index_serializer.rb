@@ -2,7 +2,7 @@
 
 class Article::IndexSerializer < ActiveModel::Serializer
   include Rails.application.routes.url_helpers
-  attributes :id, :title, :category, :published_at, :image, :location,
+  attributes :id, :title, :category, :published_at, :image, :location, :international
 
   def published_at
     object.published_at.strftime('%F %R')

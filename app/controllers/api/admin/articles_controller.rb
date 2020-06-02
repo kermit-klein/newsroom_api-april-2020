@@ -3,7 +3,7 @@
 class Api::Admin::ArticlesController < ApplicationController
   before_action :authenticate_user!
   before_action :editor?
-  before_action :location?
+  before_action :valid_location?, only: [:update]
   rescue_from ActiveRecord::RecordNotFound, with: :render_active_record_error
 
   def index
@@ -26,7 +26,8 @@ class Api::Admin::ArticlesController < ApplicationController
         article = Article.find(params[:id])
         article.premium = params[:premium] || article.premium
         article.category = params[:category] || article.category
-        article.location = params[:location] || article.location
+        article.location = params[:location]
+        article.international = article.location ? params[:international] : true
         article.published = true
         article.published_at = Time.now
         article.save
@@ -45,8 +46,8 @@ class Api::Admin::ArticlesController < ApplicationController
     end
   end
 
-  def location?
-    unless params[:location] == 'Sweden' || params[:location] == 'International'
+  def valid_location?
+    unless params[:location] == nil || params[:location] == 'Sweden'
       render json: { message: "#{params[:location]}, not a valid location", errors: ['Should have a valid location'] }, status: 422
     end
   end
