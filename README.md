@@ -60,14 +60,15 @@ get /articles/:id
 
 post /articles **Requires authentication headers!**
 Headers need to include the standard { uid: "", client: "", access_token: "", expiry: "", token_type: "Bearer" }
-with :title, and :body params (:category is available to set, or will default to "other"), gives 200 response with body:
-
+with :title, :body, :image params (:category is available to set, or will default to "other"), gives 200 response with body:
 ```
 {
   "id": :id,
   "message": "Article successfully created!"
 }
 ```
+To set location you need 'location': 'Sweden', and if you have that you may choose international true/false.
+If location is omitted international will default to true.
 
 with :title,or :body params missing, gives 400 response with body:
 
@@ -92,6 +93,13 @@ or
 
 {
   "message": "Image can't be blank"
+}
+
+or, with when trying to be set to an invalid location
+
+{ 
+  "message": ":location, not a valid location", 
+  "errors": ['Should have a valid location'] 
 }
 ```
 
