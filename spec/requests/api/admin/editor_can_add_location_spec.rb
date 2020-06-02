@@ -43,7 +43,7 @@ RSpec.describe 'Api::Admin::Articles :update', type: :request do
     end
 
     it 'gives an error message' do
-    expect(response_json['message']).to eq "Article not published: Should have a valid location"
+    expect(response_json['message']).to eq "France, not a valid location"
 
     end
   end

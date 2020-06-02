@@ -3,6 +3,7 @@
 class Api::Admin::ArticlesController < ApplicationController
   before_action :authenticate_user!
   before_action :editor?
+  before_action :location?
   rescue_from ActiveRecord::RecordNotFound, with: :render_active_record_error
 
   def index
@@ -31,8 +32,7 @@ class Api::Admin::ArticlesController < ApplicationController
         article.save
         render json: { message: 'Article successfully published!' }
       rescue StandardError => e
-        er=JSON.parse(e.message)
-        render json: { message: 'Article not published: ' + er }, status: 422
+        render json: { message: 'Article not published: ' + e.message }, status: 422
       end
     end
   end
@@ -42,6 +42,12 @@ class Api::Admin::ArticlesController < ApplicationController
   def editor?
     unless current_user.role == 'editor'
       render json: { message: 'You are not authorized', errors: ['You are not authorized'] }, status: 401
+    end
+  end
+
+  def location?
+    unless params[:location] == 'Sweden'
+      render json: { message: "#{params[:location]}, not a valid location", errors: ['Should have a valid location'] }, status: 422
     end
   end
 
