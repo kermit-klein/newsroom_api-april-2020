@@ -30,11 +30,11 @@ RSpec.describe 'Api::Admin::Articles :update', type: :request do
   end
 
     describe 'editor unsuccessfully set location'do 
-    let(:article) {create(:article, location: 'France')}
+    let(:article) {create(:article, location: 'elsewhere')}
       before do
         put "/api/admin/articles/#{article.id}", 
         headers: editors_headers,
-        params: {activity: "PUBLISH", location: "France"}
+        params: {activity: "PUBLISH", location: "elsewhere"}
         article.reload()
       end
     
@@ -43,7 +43,7 @@ RSpec.describe 'Api::Admin::Articles :update', type: :request do
     end
 
     it 'gives an error message' do
-    expect(response_json['message']).to eq "France, not a valid location"
+    expect(response_json['message']).to eq "elsewhere, not a valid location"
 
     end
   end
