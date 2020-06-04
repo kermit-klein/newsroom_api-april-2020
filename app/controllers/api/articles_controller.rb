@@ -5,30 +5,48 @@ class Api::ArticlesController < ApplicationController
 
   def index
     page = params[:page] || 1
+    category = params[:category] || 'all'
+    location = params[:location]
     offset = (page - 1) * 20
+
     case category
     when 'local'
       articles = Article
-                 .where(location: params[:location])
+                 .where(location: location, published: true)
                  .order('published_at DESC')
                  .limit(21)
                  .offset(offset)
     when 'current'
+      last_24hrs = Time.now - 1.day..Time.now
       articles = Article
-                 .where(location: params[:location], published_at: Time.now - 1.day..Time.now)
-                 .or(Article.where(international: true, published_at: Time.now - 1.day..Time.now))
+                 .where(location: location, published_at: last_24hrs)
+                 .or(Article.where(international: true, published_at: last_24hrs))
+                 .order('published_at DESC')
+                 .limit(21)
+                 .offset(offset)
+    when 'all'
+      articles = Article
+                 .where(location: location, published: true)
+                 .or(Article.where(international: true, published: true))
                  .order('published_at DESC')
                  .limit(21)
                  .offset(offset)
     else
       articles = Article
-                 .where(category: params[:category], location: params[:location])
-                 .or(Article.where(category: params[:category], international: true))
+                 .where(category: category, location: location, published: true)
+                 .or(Article.where(category: category, international: true, published: true))
                  .order('published_at DESC')
                  .limit(21)
                  .offset(offset)
     end
-    render json: articles, each_serializer: Article::IndexSerializer
+    next_page = articles.length > 20 ? page + 1 : nil
+    serialized_articles = articles[0...20].each do |article|
+      Article::IndexSerializer.new(article)
+    end
+    binding.pry
+    render json: { page: page, next_page: next_page, articles: serialized_articles }
+  rescue StandardError => e
+    binding.pry
   end
 
   def show

@@ -5,9 +5,9 @@ RSpec.describe 'Api::Articles :index', type: :request do
   categories.each do |category|
     let!("#{category}_articles".to_sym) { 4.times { create(:article, category: category) } }
   end
-  let!(:extra_swedish_sport_articles) { 9.times { create(:article, location: 'Sweden', international: false )}}
-  let!(:extra_swedish_international_sport_articles) { 9.times { create(:article, location: 'Sweden', international: true )}}
-  let!(:extra_international_sport_articles) { 9.times { create(:article, location: nil, international: true )}}
+  let!(:extra_swedish_sport_articles) { 7.times { create(:article, location: 'Sweden', international: false )}}
+  let!(:extra_swedish_international_sport_articles) { 9.times { create(:article, location: 'Sweden', international: true, published_at: Time.now - 5.days )}}
+  let!(:extra_international_sport_articles) { 11.times { create(:article, location: nil, international: true )}}
   let!(:unpublished_articles) { 3.times { create(:article, published: false) } }
   
   describe 'GET /api/articles without any params' do
@@ -16,6 +16,7 @@ RSpec.describe 'Api::Articles :index', type: :request do
     end
     
     it 'has a 200 response' do
+      binding.pry
       expect(response).to have_http_status 200
     end
 
@@ -34,6 +35,12 @@ RSpec.describe 'Api::Articles :index', type: :request do
     it 'returns only published articles' do
       response_json['articles'].each do |article|
         expect(article['published_at']).not_to eq nil
+      end
+    end
+
+    it 'returns only international articles' do
+      response_json['articles'].each do |article|
+        expect(article['international']).to eq true
       end
     end
 
@@ -63,17 +70,27 @@ RSpec.describe 'Api::Articles :index', type: :request do
   describe 'GET /api/articles with params...' do
     it 'page, location' do
       get '/api/articles', params: { location: 'Sweden', page: 3 }
-      expect(response_json['articles'].length).to eq 11
+      expect(response_json['articles'].length).to eq 9
     end
     
     it 'page, category' do
       get '/api/articles', params: { category: 'sport', page: 2 }
-      expect(response_json['articles'].length).to eq 2
+      expect(response_json['articles'].length).to eq 4
     end
 
     it 'page, location, category' do
       get '/api/articles', params: { category: 'sport', location: 'Sweden', page: 2 }
       expect(response_json['articles'].length).to eq 11
+    end
+
+    it 'category: current' do
+      get '/api/articles', params: { category: 'current', page: 2 }
+      expect(response_json['articles'].length).to eq 13
+    end
+
+    it 'category: local' do
+      get '/api/articles', params: { category: 'local', location: 'Sweden', page: 1 }
+      expect(response_json['articles'].length).to eq 16
     end
   end
 
