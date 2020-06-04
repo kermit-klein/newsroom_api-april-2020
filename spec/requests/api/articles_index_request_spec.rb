@@ -5,8 +5,8 @@ RSpec.describe 'Api::Articles :index', type: :request do
   categories.each do |category|
     let!("#{category}_articles".to_sym) { 4.times { create(:article, category: category) } }
   end
-  let!(:extra_swedish_sport_articles) { 9.times { create(:article, location: "Sweden", international: false )}}
-  let!(:extra_swedish_international_sport_articles) { 9.times { create(:article, location: "Sweden", international: true )}}
+  let!(:extra_swedish_sport_articles) { 9.times { create(:article, location: 'Sweden', international: false )}}
+  let!(:extra_swedish_international_sport_articles) { 9.times { create(:article, location: 'Sweden', international: true )}}
   let!(:extra_international_sport_articles) { 9.times { create(:article, location: nil, international: true )}}
   let!(:unpublished_articles) { 3.times { create(:article, published: false) } }
   
@@ -61,48 +61,31 @@ RSpec.describe 'Api::Articles :index', type: :request do
   end
 
   describe 'GET /api/articles with params...' do
-    it 'location, ' do
-      get '/api/articles',
-        params: { location: "Sweden" }
-      
-      expect(response_json)
+    it 'page, location' do
+      get '/api/articles', params: { location: 'Sweden', page: 3 }
+      expect(response_json['articles'].length).to eq 11
     end
     
-    it 'has a 200 response' do
-      expect(response).to have_http_status 200
+    it 'page, category' do
+      get '/api/articles', params: { category: 'sport', page: 2 }
+      expect(response_json['articles'].length).to eq 2
+    end
+
+    it 'page, location, category' do
+      get '/api/articles', params: { category: 'sport', location: 'Sweden', page: 2 }
+      expect(response_json['articles'].length).to eq 11
     end
   end
 
-  describe 'GET /api/articles with only category param' do
-    before do
-      get '/api/articles',
-      params: { category: "sport" }
+  describe 'GET /api/articles tells you if there is more content' do
+    it 'tells you there is another page to fetch' do
+      get '/api/articles', params: { category: 'sport' }
+      expect(response_json['next_page']).to eq 2
     end
-    
-    it 'has a 200 response' do
-      expect(response).to have_http_status 200
-    end
-  end
-  
-  describe 'GET /api/articles with location and category param' do
-    before do
-      get '/api/articles',
-      params: { location: "Sweden", category: "sport" }
-    end
-    
-    it 'has a 200 response' do
-      expect(response).to have_http_status 200
-    end
-  end
 
-  describe 'GET /api/articles with page param' do
-    before do
-      get '/api/articles',
-      params: { page: 3 }
-    end
-    
-    it 'has a 200 response' do
-      expect(response).to have_http_status 200
+    it 'tells you there is not another page to fetch' do
+      get '/api/articles', params: { category: 'sport', page: 2 }
+      expect(response_json['next_page']).to eq nil
     end
   end
 end
