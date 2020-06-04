@@ -63,7 +63,7 @@ RSpec.describe 'Api::Admin::Articles :update', type: :request do
     end
 
     it 'gives an error message' do
-      expect(response_json['message']).to eq 'elsewhere, not a valid location'
+      expect(response_json['message']).to eq "'elsewhere' is not a valid location"
     end
   end
 end
