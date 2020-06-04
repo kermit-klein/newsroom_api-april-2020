@@ -47,8 +47,8 @@ class Api::Admin::ArticlesController < ApplicationController
   end
 
   def valid_location?
-    unless params[:location] == nil || params[:location] == 'Sweden'
-      render json: { message: "#{params[:location]}, not a valid location", errors: ['Should have a valid location'] }, status: 422
+    unless params[:location].nil? || params[:location] == 'Sweden'
+      render json: { message: "'#{params[:location]}' is not a valid location" }, status: 422
     end
   end
 
