@@ -7,7 +7,7 @@ class Api::ArticlesController < ApplicationController
     page = params[:page] || 1
     category = params[:category] || 'all'
     location = params[:location]
-    offset = (page - 1) * 20
+    offset = (page.to_i - 1) * 20
 
     case category
     when 'local'
@@ -19,8 +19,8 @@ class Api::ArticlesController < ApplicationController
     when 'current'
       last_24hrs = Time.now - 1.day..Time.now
       articles = Article
-                 .where(location: location, published_at: last_24hrs)
-                 .or(Article.where(international: true, published_at: last_24hrs))
+                 .where(location: location, published_at: last_24hrs, published: true)
+                 .or(Article.where(international: true, published_at: last_24hrs, published: true))
                  .order('published_at DESC')
                  .limit(21)
                  .offset(offset)
@@ -39,14 +39,11 @@ class Api::ArticlesController < ApplicationController
                  .limit(21)
                  .offset(offset)
     end
+
     next_page = articles.length > 20 ? page + 1 : nil
-    serialized_articles = articles[0...20].each do |article|
-      Article::IndexSerializer.new(article)
-    end
-    binding.pry
-    render json: { page: page, next_page: next_page, articles: serialized_articles }
+    render json: { articles: articles[0...20], each_serializer: Article::IndexSerializer, page: page, next_page: next_page }
   rescue StandardError => e
-    binding.pry
+    puts e
   end
 
   def show

@@ -16,7 +16,6 @@ RSpec.describe 'Api::Articles :index', type: :request do
     end
     
     it 'has a 200 response' do
-      binding.pry
       expect(response).to have_http_status 200
     end
 
@@ -68,28 +67,28 @@ RSpec.describe 'Api::Articles :index', type: :request do
   end
 
   describe 'GET /api/articles with params...' do
-    it 'page, location' do
+    it 'page, location (51 items)' do
       get '/api/articles', params: { location: 'Sweden', page: 3 }
-      expect(response_json['articles'].length).to eq 9
+      expect(response_json['articles'].length).to eq 11
     end
     
-    it 'page, category' do
+    it 'page, category  (24 items)' do
       get '/api/articles', params: { category: 'sport', page: 2 }
       expect(response_json['articles'].length).to eq 4
     end
 
-    it 'page, location, category' do
+    it 'page, location, category (31 items)' do
       get '/api/articles', params: { category: 'sport', location: 'Sweden', page: 2 }
       expect(response_json['articles'].length).to eq 11
     end
 
-    it 'category: current' do
+    it 'category: current (35 items)' do
       get '/api/articles', params: { category: 'current', page: 2 }
-      expect(response_json['articles'].length).to eq 13
+      expect(response_json['articles'].length).to eq 15
     end
 
-    it 'category: local' do
-      get '/api/articles', params: { category: 'local', location: 'Sweden', page: 1 }
+    it 'category: local (16 items)' do
+      get '/api/articles', params: { category: 'local', location: 'Sweden' }
       expect(response_json['articles'].length).to eq 16
     end
   end
