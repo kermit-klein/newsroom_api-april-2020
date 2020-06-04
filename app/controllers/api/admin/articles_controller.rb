@@ -3,6 +3,7 @@
 class Api::Admin::ArticlesController < ApplicationController
   before_action :authenticate_user!
   before_action :editor?
+  before_action :valid_location?, only: [:update]
   rescue_from ActiveRecord::RecordNotFound, with: :render_active_record_error
 
   def index
@@ -25,6 +26,8 @@ class Api::Admin::ArticlesController < ApplicationController
         article = Article.find(params[:id])
         article.premium = params[:premium] || article.premium
         article.category = params[:category] || article.category
+        article.location = params[:location]
+        article.international = article.location ? params[:international] : true
         article.published = true
         article.published_at = Time.now
         article.save
@@ -40,6 +43,12 @@ class Api::Admin::ArticlesController < ApplicationController
   def editor?
     unless current_user.role == 'editor'
       render json: { message: 'You are not authorized', errors: ['You are not authorized'] }, status: 401
+    end
+  end
+
+  def valid_location?
+    unless params[:location].nil? || params[:location] == 'Sweden'
+      render json: { message: "'#{params[:location]}' is not a valid location" }, status: 422
     end
   end
 

@@ -29,6 +29,14 @@ RSpec.describe 'Api::Articles :index', type: :request do
       it ':published_at' do
         expect(response_json['articles'][0]).to have_key 'published_at'
       end
+
+      it ':location' do
+        expect(response_json['articles'][0]).to have_key 'location'
+      end
+
+      it ':international' do
+        expect(response_json['articles'][0]).to have_key 'international'
+      end
     end
   end
 end

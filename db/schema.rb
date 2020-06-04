@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_31_181519) do
+ActiveRecord::Schema.define(version: 2020_06_02_141416) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,6 +45,8 @@ ActiveRecord::Schema.define(version: 2020_05_31_181519) do
     t.boolean "premium", default: false
     t.boolean "published", default: false
     t.datetime "published_at"
+    t.string "location"
+    t.boolean "international", default: true
   end
 
   create_table "users", force: :cascade do |t|
