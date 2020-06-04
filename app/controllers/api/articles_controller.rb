@@ -4,13 +4,37 @@ class Api::ArticlesController < ApplicationController
   before_action :authenticate_user!, only: [:create]
 
   def index
-    article = Article.where(published: true)
-    render json: article, each_serializer: Article::IndexSerializer
+    page = params[:page] || 1
+    offset = (page - 1) * 20
+    case category
+    when 'local'
+      articles = Article
+                 .where(location: params[:location])
+                 .order('published_at DESC')
+                 .limit(21)
+                 .offset(offset)
+    when 'current'
+      articles = Article
+                 .where(location: params[:location], published_at: Time.now - 1.day..Time.now)
+                 .or(Article.where(international: true, published_at: Time.now - 1.day..Time.now))
+                 .order('published_at DESC')
+                 .limit(21)
+                 .offset(offset)
+    else
+      articles = Article
+                 .where(category: params[:category], location: params[:location])
+                 .or(Article.where(category: params[:category], international: true))
+                 .order('published_at DESC')
+                 .limit(21)
+                 .offset(offset)
+    end
+    render json: articles, each_serializer: Article::IndexSerializer
   end
 
   def show
     article = Article.find(params[:id])
     raise StandardError unless article.published
+
     render json: article, serializer: Article::ShowSerializer
   rescue StandardError
     render json: { message: "Article with id #{params[:id]} could not be found." }, status: :not_found
