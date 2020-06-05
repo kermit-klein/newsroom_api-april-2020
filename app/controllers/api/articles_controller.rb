@@ -4,44 +4,21 @@ class Api::ArticlesController < ApplicationController
   before_action :authenticate_user!, only: [:create]
 
   def index
-    page = params[:page] || 1
     category = params[:category] || 'all'
-    location = params[:location]
-    offset = (page.to_i - 1) * 20
 
     case category
     when 'local'
-      articles = Article
-                 .where(location: location, published: true)
-                 .order('published_at DESC')
-                 .limit(21)
-                 .offset(offset)
+      articles = find_articles({}, false)
     when 'current'
       last_24hrs = Time.now - 1.day..Time.now
-      articles = Article
-                 .where(location: location, published_at: last_24hrs, published: true)
-                 .or(Article.where(international: true, published_at: last_24hrs, published: true))
-                 .order('published_at DESC')
-                 .limit(21)
-                 .offset(offset)
+      articles = find_articles({published_at: last_24hrs}, true)
     when 'all'
-      articles = Article
-                 .where(location: location, published: true)
-                 .or(Article.where(international: true, published: true))
-                 .order('published_at DESC')
-                 .limit(21)
-                 .offset(offset)
+      articles = find_articles({}, true)
     else
-      articles = Article
-                 .where(category: category, location: location, published: true)
-                 .or(Article.where(category: category, international: true, published: true))
-                 .order('published_at DESC')
-                 .limit(21)
-                 .offset(offset)
+      articles = find_articles({category: category}, true)
     end
 
-    next_page = articles.length > 20 ? page + 1 : nil
-    render json: { articles: articles[0...20], each_serializer: Article::IndexSerializer, page: page, next_page: next_page }
+    render json: create_json_response(articles)
   rescue StandardError => e
     puts e
   end
@@ -68,6 +45,24 @@ class Api::ArticlesController < ApplicationController
   end
 
   private
+
+  def find_articles(parameters, include_international)
+    @page = params[:page] || 1
+    offset = (@page.to_i - 1) * 20
+    
+    Article
+    .where(**parameters, location: params[:location], published: true)
+    .or(Article.where(**parameters, international: include_international, published: true))
+    .order('published_at DESC')
+    .limit(21)
+    .offset(offset)
+  end
+
+  def create_json_response(articles)
+    next_page = articles.length > 20 ? @page + 1 : nil
+    json = { articles: articles[0...20].map { |article| Article::IndexSerializer.new(article) }}
+    json.merge!(page: @page, next_page: next_page)
+  end
 
   def attach_image(article)
     params_image = params[:image]
