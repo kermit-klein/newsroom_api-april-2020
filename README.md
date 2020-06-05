@@ -9,21 +9,32 @@ Prefix for all requests >>> **/api**
 #### index
 
 get /articles  
-created_at is based on db created_at, and may need to be changed to be published_at later
-Response : {articles:[{id:1,title:"title1"},{id:2,title:"title2"}]}
+Can take any combination of location: "Sweden"/nil, category: "", page: 3 (if omitted = 1 )
+Note that even though "local" and "current" are not article categories, they are valid in this context.
+Local will serve mixed category articles that all have the location provided, or if no location provided, serves a mix of articles without location set.
+Current serve as without argument, but will limit the responses to include only articles published in the last 24 hours.
+Articles are ordered and latest published items are served first. Items are sent in pages of 20 articles
+Each response will show which page it came from, and will return either next_page: page+1 if there is more content to load, or `nil` if there are no more articles to load with the used params.
+Each request will include articles belonging to you location, or with international relevance.
 
 ```
 {
+    "page": 1,
+    "next_page: nil",
     "articles":[
         {"id":1,
         "title":"title1",
         "category":"category1",
-        "published_at":"YYYY-MM-dd hh:mm"
+        "published_at":"YYYY-MM-dd hh:mm",
+        "location": "Sweden",
+        "international": true
         },
         {"id":2,
         "title":"title2",
         "category":"category2",
-        "published_at":"YYYY-MM-dd hh:mm"
+        "published_at":"YYYY-MM-dd hh:mm",
+        "location": "Sweden",
+        "international": true
         }
     ]
 }

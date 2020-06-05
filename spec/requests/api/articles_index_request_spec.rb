@@ -64,6 +64,16 @@ RSpec.describe 'Api::Articles :index', type: :request do
         expect(response_json['articles'][0]).to have_key 'international'
       end
     end
+
+    describe 'response does not have keys' do
+      it ':created_at' do
+        expect(response_json['articles'][0]).not_to have_key 'created_at'
+      end
+
+      it ':updated_at' do
+        expect(response_json['articles'][0]).not_to have_key 'updated_at'
+      end
+    end
   end
 
   describe 'GET /api/articles with params...' do
@@ -87,9 +97,14 @@ RSpec.describe 'Api::Articles :index', type: :request do
       expect(response_json['articles'].length).to eq 15
     end
 
-    it 'category: local (16 items)' do
-      get '/api/articles', params: { category: 'local', location: 'Sweden' }
+    it 'category: local, location: Sweden (16 items)' do
+      get '/api/articles', params: { category: 'local', location: "Sweden" }
       expect(response_json['articles'].length).to eq 16
+    end
+
+    it 'category: local, no location (11 items)' do
+      get '/api/articles', params: { category: 'local' }
+      expect(response_json['articles'].length).to eq 11
     end
   end
 

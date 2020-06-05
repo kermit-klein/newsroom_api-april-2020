@@ -8,14 +8,14 @@ class Api::ArticlesController < ApplicationController
 
     case category
     when 'local'
-      articles = find_articles({}, false)
+      articles = find_articles({}, { id: -1 })
     when 'current'
       last_24hrs = Time.now - 1.day..Time.now
-      articles = find_articles({published_at: last_24hrs}, true)
+      articles = find_articles({published_at: last_24hrs}, {published_at: last_24hrs})
     when 'all'
-      articles = find_articles({}, true)
+      articles = find_articles({}, {})
     else
-      articles = find_articles({category: category}, true)
+      articles = find_articles({category: category}, {category: category})
     end
 
     render json: create_json_response(articles)
@@ -46,13 +46,13 @@ class Api::ArticlesController < ApplicationController
 
   private
 
-  def find_articles(parameters, include_international)
+  def find_articles(either_params, or_params)
     @page = params[:page] || 1
     offset = (@page.to_i - 1) * 20
     
     Article
-    .where(**parameters, location: params[:location], published: true)
-    .or(Article.where(**parameters, international: include_international, published: true))
+    .where(**either_params, location: params[:location], published: true)
+    .or(Article.where(**or_params, international: true, published: true))
     .order('published_at DESC')
     .limit(21)
     .offset(offset)
