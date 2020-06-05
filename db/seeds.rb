@@ -9,7 +9,7 @@
     body: Faker::Lorem.paragraph(sentence_count: 70), 
     category: categories.sample, premium: premium.sample, 
     published: true, 
-    published_at: Time.now,
+    published_at: Time.now - rand*200000,
     location: location,
     international: location ? [true,false].sample : true
   )
