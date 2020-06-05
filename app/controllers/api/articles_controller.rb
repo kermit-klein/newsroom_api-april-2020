@@ -4,6 +4,7 @@ class Api::ArticlesController < ApplicationController
   before_action :authenticate_user!, only: [:create]
 
   def index
+    check_index_params
     category = params[:category] || 'all'
 
     case category
@@ -11,16 +12,16 @@ class Api::ArticlesController < ApplicationController
       articles = find_articles({}, { id: -1 })
     when 'current'
       last_24hrs = Time.now - 1.day..Time.now
-      articles = find_articles({published_at: last_24hrs}, {published_at: last_24hrs})
+      articles = find_articles({ published_at: last_24hrs }, { published_at: last_24hrs })
     when 'all'
       articles = find_articles({}, {})
     else
-      articles = find_articles({category: category}, {category: category})
+      articles = find_articles({ category: category }, { category: category })
     end
 
     render json: create_json_response(articles)
   rescue StandardError => e
-    puts e
+    render json: { message: e.message }, status: 422
   end
 
   def show
@@ -46,21 +47,32 @@ class Api::ArticlesController < ApplicationController
 
   private
 
+  def check_index_params
+    valid_categories = Article.categories.keys + %w[current local]
+    if params[:location] && !params[:location].is_a?(String)
+      raise TypeError, 'Location parameter must be a string'
+    elsif params[:page] && params[:page].to_i < 1
+      raise TypeError, 'Page parameter must be a positive integer'
+    elsif params[:category] && !valid_categories.include?(params[:category])
+      raise TypeError, "Category parameter must be omitted or one of the following: #{valid_categories.join(", ")}"
+    end
+  end
+
   def find_articles(either_params, or_params)
     @page = params[:page] || 1
     offset = (@page.to_i - 1) * 20
-    
+
     Article
-    .where(**either_params, location: params[:location], published: true)
-    .or(Article.where(**or_params, international: true, published: true))
-    .order('published_at DESC')
-    .limit(21)
-    .offset(offset)
+      .where(**either_params, location: params[:location], published: true)
+      .or(Article.where(**or_params, international: true, published: true))
+      .order('published_at DESC')
+      .limit(21)
+      .offset(offset)
   end
 
   def create_json_response(articles)
     next_page = articles.length > 20 ? @page + 1 : nil
-    json = { articles: articles[0...20].map { |article| Article::IndexSerializer.new(article) }}
+    json = { articles: articles[0...20].map { |article| Article::IndexSerializer.new(article) } }
     json.merge!(page: @page, next_page: next_page)
   end
 
