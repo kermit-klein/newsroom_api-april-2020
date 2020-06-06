@@ -15,7 +15,7 @@ Local will serve mixed category articles that all have the location provided, or
 Current serve as without argument, but will limit the responses to include only articles published in the last 24 hours.
 Articles are ordered and latest published items are served first. Items are sent in pages of 20 articles
 Each response will show which page it came from, and will return either next_page: page+1 if there is more content to load, or `nil` if there are no more articles to load with the used params.
-Each request will include articles belonging to you location, or with international relevance.
+Each request will include articles belonging to your location, or with international relevance.
 
 ```
 {
@@ -26,6 +26,7 @@ Each request will include articles belonging to you location, or with internatio
         "title":"title1",
         "category":"category1",
         "published_at":"YYYY-MM-dd hh:mm",
+        "image":"http://amazon-web-service-thingy",
         "location": "Sweden",
         "international": true
         },
@@ -33,6 +34,7 @@ Each request will include articles belonging to you location, or with internatio
         "title":"title2",
         "category":"category2",
         "published_at":"YYYY-MM-dd hh:mm",
+        "image":"http://amazon-web-service-thingy",
         "location": "Sweden",
         "international": true
         }
@@ -53,7 +55,8 @@ get /articles/:id
     "id": 1,
     "title": "A title",
     "body": "The body",
-    "published_at":"YYYY-MM-dd hh:mm"
+    "published_at":"YYYY-MM-dd hh:mm",
+    "image":"http://amazon-web-service-thingy",
     "premium": false
   }
 }
