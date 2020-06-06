@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe 'Api::Admin::Articles :index', type: :request do
-  let!(:articles) { 5.times { create(:article, published: true) } }
-  let!(:unpublished_articles) { 7.times { create(:article) } }
+  let!(:articles) { 5.times { create(:article) } }
+  let!(:unpublished_articles) { 7.times { create(:article, published: false) } }
 
   let(:editor) { create(:user, role: 'editor') }
   let(:editors_credentials) { editor.create_new_auth_token }

@@ -9,5 +9,7 @@ FactoryBot.define do
     trait :with_image do
       image { fixture_file_upload(Rails.root.join('spec', 'support', 'assets', 'test.jpg'), 'image/jpg') }
     end
+    published { true }
+    published_at { Time.now }
   end
 end
