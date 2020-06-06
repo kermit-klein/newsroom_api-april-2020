@@ -5,9 +5,9 @@ RSpec.describe 'Api::Articles :index', type: :request do
   categories.each do |category|
     let!("#{category}_articles".to_sym) { 4.times { create(:article, category: category) } }
   end
-  let!(:extra_swedish_sport_articles) { 7.times { create(:article, location: 'Sweden', international: false) } }
-  let!(:extra_swedish_international_sport_articles) { 9.times { create(:article, location: 'Sweden', international: true, published_at: Time.now - 5.days) } }
-  let!(:extra_international_sport_articles) { 11.times { create(:article, location: nil, international: true) } }
+  let!(:extra_swedish_sport_articles) { 9.times { create(:article, location: 'Sweden', international: false) } }
+  let!(:extra_swedish_international_sport_articles) { 11.times { create(:article, location: 'Sweden', international: true, published_at: Time.now - 5.days) } }
+  let!(:extra_international_sport_articles) { 13.times { create(:article, location: nil, international: true) } }
   let!(:unpublished_articles) { 3.times { create(:article, published: false) } }
 
   describe 'GET /api/articles without any params' do
@@ -28,7 +28,7 @@ RSpec.describe 'Api::Articles :index', type: :request do
     end
 
     it 'returns one batch of 20 of the latest international articles' do
-      expect(response_json['articles'].length).to eq 20
+      expect(response_json['articles'].length).to eq 24
     end
 
     it 'returns only published articles' do
@@ -77,34 +77,34 @@ RSpec.describe 'Api::Articles :index', type: :request do
   end
 
   describe 'GET /api/articles with good params...' do
-    it 'page, location (51 items)' do
+    it 'page, location (57 items)' do
       get '/api/articles', params: { location: 'Sweden', page: 3 }
-      expect(response_json['articles'].length).to eq 11
+      expect(response_json['articles'].length).to eq 9
     end
 
-    it 'page, category  (24 items)' do
+    it 'page, category  (28 items)' do
       get '/api/articles', params: { category: 'sport', page: 2 }
       expect(response_json['articles'].length).to eq 4
     end
 
-    it 'page, location, category (31 items)' do
+    it 'page, location, category (37 items)' do
       get '/api/articles', params: { category: 'sport', location: 'Sweden', page: 2 }
-      expect(response_json['articles'].length).to eq 11
+      expect(response_json['articles'].length).to eq 13
     end
 
-    it 'category: current (35 items)' do
+    it 'category: current (37 items)' do
       get '/api/articles', params: { category: 'current', page: 2 }
-      expect(response_json['articles'].length).to eq 15
+      expect(response_json['articles'].length).to eq 13
     end
 
-    it 'category: local, location: Sweden (16 items)' do
+    it 'category: local, location: Sweden (20 items)' do
       get '/api/articles', params: { category: 'local', location: 'Sweden' }
-      expect(response_json['articles'].length).to eq 16
+      expect(response_json['articles'].length).to eq 20
     end
 
-    it 'category: local, no location (11 items)' do
+    it 'category: local, no location (13 items)' do
       get '/api/articles', params: { category: 'local' }
-      expect(response_json['articles'].length).to eq 11
+      expect(response_json['articles'].length).to eq 13
     end
   end
 
