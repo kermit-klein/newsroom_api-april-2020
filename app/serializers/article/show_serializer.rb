@@ -9,7 +9,7 @@ class Article::ShowSerializer < ActiveModel::Serializer
   end
 
   def body
-    object.premium && current_user.nil? ? object.body[0..299] : object.body
+    object.premium && (current_user.nil? || current_user.role == 'user') ? object.body[0..299] : object.body
   end
 
   def image
