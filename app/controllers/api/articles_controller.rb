@@ -59,8 +59,9 @@ class Api::ArticlesController < ApplicationController
   end
 
   def find_articles(main_params, opt_params = {})
-    @page = params[:page] || 1
-    offset = (@page.to_i - 1) * 24
+    page = params[:page] || 1
+    @page = page.to_i
+    offset = (@page - 1) * 24
 
     Article
       .where(**main_params, location: params[:location], published: true)
