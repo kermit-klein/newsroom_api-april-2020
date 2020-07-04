@@ -1,6 +1,54 @@
-# newsroom_api-april-2020
+# Daily News Sense API
 
-# API
+[![Build Status](https://semaphoreci.com/api/v1/viamarcus/newsroom_api-april-2020/branches/dependabot-bundler-rack-2-2-3/badge.svg)](https://semaphoreci.com/viamarcus/newsroom_api-april-2020)
+
+The objective was to create a news platform that allow for the staff to create, review and publish news, and for users to browse both local and international news, as well as a mobile version of the user client.
+
+All clients make use of roles (journalist, editor, regular user, subscriber) to authorise users on different levels.
+
+The user facing site also features 
+* automatic position detection
+* live local weather
+* ads 
+* ability to become a subscriber to access more content
+* automatic browser language detection (eng / swe)
+* ability to choose between english and swedish UI language
+* browsing news by categories such as "economy" and "latest news".
+
+
+## Authors:
+
+[Ali Erbay](https://github.com/kermit-klein) 
+[Steve Watson](https://github.com/designerofthing)  
+[Pauline Barnades](https://github.com/PaulineBA)  
+[Erik Björn](https://github.com/erikbjoern)  
+[Marcus Sjöqvist](https://github.com/viamarcus)  
+[Jenny Scherr](https://github.com/jysmys)  
+
+
+## Clone:
+
+The API connects to the three front end clients, the [web app](https://github.com/kermit-klein/newsroom_client-april-2020), [mobile app](https://github.com/kermit-klein/newsroom_mobile-april-2020) and [staff web app](https://github.com/kermit-klein/newsroom_staff-april-2020). 
+To run these apps locally with a live server, you need to clone this repo and run:
+* `$ gem install bundler` to install [bundler](https://bundler.io/)
+* `$ bundle` to install gems (dependencies)
+* `$ rails db:create db:migrate` to set up the database
+* `$ rails db:seed` to populate the database with 60 random articles
+* `$ rails c` to start the rails console
+* In the console, run: `User.create(email: 'user@mail.com', password: 'password123', role: (optional) 'journalist / editor / subscriber')` to create a user directly in the database. There's no GUI for creating staff roles.
+
+## Testing:
+
+The API was developed test driven using [RSpec](https://rspec.info/), [FactoryBot](https://github.com/thoughtbot/factory_bot#readme) and [Coveralls](https://docs.coveralls.io/)
+
+## Additional gems:
+
+* [devise_token_auth](https://github.com/lynndylanhurley/devise_token_auth#readme) for token based authentication
+* [stripe-rails](https://github.com/tansengming/stripe-rails#readme) for handling requests to Stripe
+* [faker](https://github.com/faker-ruby/faker#readme) for seeding database with random but relevant content
+* we also use the service of [picsum photos](https://picsum.photos/) to serve random images for the articles
+
+# Endpoints documentation:
 
 Prefix for all requests >>> **/api**
 
