@@ -2,6 +2,8 @@
 
 [![Build Status](https://semaphoreci.com/api/v1/viamarcus/newsroom_api-april-2020/branches/dependabot-bundler-rack-2-2-3/badge.svg)](https://semaphoreci.com/viamarcus/newsroom_api-april-2020)
 
+![Img](https://i.imgur.com/D5aeat2.png)
+
 The objective was to create a news platform that allow for the staff to create, review and publish news, and for users to browse both local and international news, as well as a mobile version of the user client.
 
 All clients make use of roles (journalist, editor, regular user, subscriber) to authorise users on different levels.
